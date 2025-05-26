@@ -1,3 +1,113 @@
+@using BlazorTerminal.ComponentLib.Models
+
 <div class="blazor-terminal">
-    Terminal placeholder
+    @for (int r = 0; r < Buffer.Rows; r++)
+    {
+        <div class="terminal-row">
+            @for (int c = 0; c < Buffer.Columns; c++)
+            {
+                var cell = Buffer[r, c];
+                var style = GetStyle(cell);
+                <span class="terminal-cell" style="@style">@cell.Character</span>
+            }
+        </div>
+    }
 </div>
+
+@code {
+    /// <summary>
+    /// Number of rows displayed by the terminal.
+    /// </summary>
+    [Parameter]
+    public int Rows { get; set; } = 24;
+
+    /// <summary>
+    /// Number of columns displayed by the terminal.
+    /// </summary>
+    [Parameter]
+    public int Columns { get; set; } = 80;
+
+    private ScreenBuffer Buffer = default!;
+    private CursorState Cursor = new();
+
+    protected override void OnInitialized()
+    {
+        Buffer = new ScreenBuffer(Rows, Columns);
+    }
+
+    /// <summary>
+    /// Write text to the terminal at the current cursor position.
+    /// Lines that exceed the terminal width will wrap automatically.
+    /// </summary>
+    /// <param name="data">Text to write.</param>
+    public void Write(string data)
+    {
+        foreach (var ch in data)
+        {
+            if (ch == '\r')
+            {
+                Cursor.Column = 0;
+                continue;
+            }
+            if (ch == '\n')
+            {
+                MoveToNewLine();
+                continue;
+            }
+
+            if (Cursor.Column >= Columns)
+            {
+                MoveToNewLine();
+            }
+
+            Buffer[Cursor.Row, Cursor.Column] = new TerminalCell(ch);
+            Cursor.Column++;
+
+            if (Cursor.Column >= Columns)
+            {
+                MoveToNewLine();
+            }
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void MoveToNewLine()
+    {
+        Cursor.Column = 0;
+        Cursor.Row++;
+        if (Cursor.Row >= Rows)
+        {
+            ScrollUp();
+            Cursor.Row = Rows - 1;
+        }
+    }
+
+    private void ScrollUp()
+    {
+        for (int r = 1; r < Rows; r++)
+        {
+            for (int c = 0; c < Columns; c++)
+            {
+                Buffer[r - 1, c] = Buffer[r, c];
+            }
+        }
+        for (int c = 0; c < Columns; c++)
+        {
+            Buffer[Rows - 1, c] = new TerminalCell(' ');
+        }
+    }
+
+    private static string GetStyle(TerminalCell cell)
+    {
+        var style = $"color:{cell.Style.ForegroundColor};background-color:{cell.Style.BackgroundColor};";
+        if (cell.Style.Attributes.HasFlag(TextAttribute.Bold)) style += "font-weight:bold;";
+        if (cell.Style.Attributes.HasFlag(TextAttribute.Italic)) style += "font-style:italic;";
+        if (cell.Style.Attributes.HasFlag(TextAttribute.Underline)) style += "text-decoration:underline;";
+        if (cell.Style.Attributes.HasFlag(TextAttribute.Inverse))
+        {
+            style += $"color:{cell.Style.BackgroundColor};background-color:{cell.Style.ForegroundColor};";
+        }
+        return style;
+    }
+}
