@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorTerminal.ComponentLib", "BlazorTerminal.ComponentLib/BlazorTerminal.ComponentLib.csproj", "{a868ed5c-76ff-4e42-803c-18db3bd6e988}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorTerminal.TestApp", "BlazorTerminal.TestApp/BlazorTerminal.TestApp.csproj", "{b8997834-7e8c-422c-a1e9-a01ea843a77c}"
+EndProject
+Global
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+        Release|Any CPU = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {a868ed5c-76ff-4e42-803c-18db3bd6e988}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {a868ed5c-76ff-4e42-803c-18db3bd6e988}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {a868ed5c-76ff-4e42-803c-18db3bd6e988}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {a868ed5c-76ff-4e42-803c-18db3bd6e988}.Release|Any CPU.Build.0 = Release|Any CPU
+        {b8997834-7e8c-422c-a1e9-a01ea843a77c}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {b8997834-7e8c-422c-a1e9-a01ea843a77c}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {b8997834-7e8c-422c-a1e9-a01ea843a77c}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {b8997834-7e8c-422c-a1e9-a01ea843a77c}.Release|Any CPU.Build.0 = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(SolutionProperties) = preSolution
+        HideSolutionNode = FALSE
+    EndGlobalSection
+EndGlobal
