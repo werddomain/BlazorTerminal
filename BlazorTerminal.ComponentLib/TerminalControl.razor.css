@@ -14,3 +14,17 @@
 .terminal-cell {
     display: inline-block;
 }
+
+/* Cursor Styles */
+.cursor.block {
+    background-color: var(--cursor-bg, #fff);
+    color: var(--cursor-fg, #000);
+}
+
+.cursor.underline {
+    border-bottom: 1px solid var(--cursor-fg, #fff);
+}
+
+.cursor.bar {
+    border-left: 1px solid var(--cursor-fg, #fff);
+}
