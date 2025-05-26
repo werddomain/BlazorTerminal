@@ -8,7 +8,10 @@
             {
                 var cell = Buffer[r, c];
                 var style = GetStyle(cell);
-                <span class="terminal-cell" style="@style">@cell.Character</span>
+                var cursorClass = Cursor.Visible && Cursor.Row == r && Cursor.Column == c
+                    ? $"cursor {Cursor.Shape.ToString().ToLower()}"
+                    : string.Empty;
+                <span class="terminal-cell @cursorClass" style="@style">@cell.Character</span>
             }
         </div>
     }
@@ -33,6 +36,29 @@
     protected override void OnInitialized()
     {
         Buffer = new ScreenBuffer(Rows, Columns);
+    }
+
+    private bool _demoStarted;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_demoStarted)
+        {
+            _demoStarted = true;
+            await SimulateTypingAsync("Welcome to BlazorTerminal!\n");
+        }
+    }
+
+    /// <summary>
+    /// Simulate typing text into the terminal with a small delay between characters.
+    /// </summary>
+    private async Task SimulateTypingAsync(string text, int delayMs = 50)
+    {
+        foreach (var ch in text)
+        {
+            Write(ch.ToString());
+            await Task.Delay(delayMs);
+        }
     }
 
     /// <summary>
