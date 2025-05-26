@@ -1,0 +1,9 @@
+@using BlazorTerminal.ComponentLib
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" />
+    </Found>
+    <NotFound>
+        <p>Page not found</p>
+    </NotFound>
+</Router>
