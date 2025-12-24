@@ -1,4 +1,5 @@
 @using BlazorTerminal.ComponentLib.Models
+@using BlazorTerminal.ComponentLib.TerminalGui
 
 <div class="blazor-terminal">
     @for (int r = 0; r < Buffer.Rows; r++)
@@ -106,6 +107,89 @@
     {
         Write(data);
         MoveToNewLine();
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Sets the cursor position to the specified row and column.
+    /// </summary>
+    public void SetCursorPosition(int row, int column)
+    {
+        Cursor.Row = Math.Clamp(row, 0, Rows - 1);
+        Cursor.Column = Math.Clamp(column, 0, Columns - 1);
+    }
+
+    /// <summary>
+    /// Clears the entire terminal screen.
+    /// </summary>
+    public void Clear()
+    {
+        Buffer = new ScreenBuffer(Rows, Columns);
+        Cursor.Row = 0;
+        Cursor.Column = 0;
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Writes text at a specific position in the terminal.
+    /// </summary>
+    public void DrawAt(int row, int column, string text)
+    {
+        var savedRow = Cursor.Row;
+        var savedColumn = Cursor.Column;
+
+        SetCursorPosition(row, column);
+        Write(text);
+
+        Cursor.Row = savedRow;
+        Cursor.Column = savedColumn;
+    }
+
+    /// <summary>
+    /// Draws a box at the specified position with the given dimensions and border style.
+    /// </summary>
+    public void DrawBox(int row, int column, int width, int height, BorderStyle? borderStyle = null, string? title = null)
+    {
+        var boxLines = Box.Draw(width, height, borderStyle, title);
+        for (int i = 0; i < boxLines.Length; i++)
+        {
+            DrawAt(row + i, column, boxLines[i]);
+        }
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Draws a panel at its designated position.
+    /// </summary>
+    public void DrawPanel(Panel panel)
+    {
+        var lines = panel.Render();
+        for (int i = 0; i < lines.Length; i++)
+        {
+            DrawAt(panel.Row + i, panel.Column, lines[i]);
+        }
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Draws a progress bar at the specified position.
+    /// </summary>
+    public void DrawProgressBar(int row, int column, ProgressBar progressBar)
+    {
+        DrawAt(row, column, progressBar.Render());
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Draws a menu at the specified position.
+    /// </summary>
+    public void DrawMenu(int row, int column, Menu menu)
+    {
+        var lines = menu.Render();
+        for (int i = 0; i < lines.Length; i++)
+        {
+            DrawAt(row + i, column, lines[i]);
+        }
         InvokeAsync(StateHasChanged);
     }
 

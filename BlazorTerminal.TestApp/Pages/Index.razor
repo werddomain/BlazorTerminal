@@ -1,18 +1,100 @@
 @page "/"
+@using BlazorTerminal.ComponentLib.TerminalGui
 
-<h3>Test Terminal</h3>
+<h3>BlazorTerminal - GUI Demo</h3>
 
-<TerminalControl @ref="terminal" />
+<TerminalControl @ref="terminal" Rows="30" Columns="100" />
 
 @code {
     private TerminalControl? terminal;
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && terminal is not null)
         {
-            terminal.WriteLine("Hello from TestApp!");
-            terminal.Write("> ");
+            await DemoTerminalGuiAsync();
         }
+    }
+
+    private async Task DemoTerminalGuiAsync()
+    {
+        if (terminal == null) return;
+
+        terminal.Clear();
+
+        // Demo 1: Welcome message
+        terminal.WriteLine("╔═══════════════════════════════════════════════════════════════════════╗");
+        terminal.WriteLine("║         Welcome to BlazorTerminal - Terminal GUI Demo                ║");
+        terminal.WriteLine("╚═══════════════════════════════════════════════════════════════════════╝");
+        terminal.WriteLine("");
+
+        await Task.Delay(500);
+
+        // Demo 2: Different border styles
+        terminal.WriteLine("Border Styles:");
+        terminal.WriteLine("");
+
+        terminal.DrawBox(5, 2, 20, 5, BorderStyle.Single, "Single");
+        terminal.DrawBox(5, 24, 20, 5, BorderStyle.Double, "Double");
+        terminal.DrawBox(5, 46, 20, 5, BorderStyle.Rounded, "Rounded");
+        terminal.DrawBox(5, 68, 20, 5, BorderStyle.Bold, "Bold");
+
+        await Task.Delay(500);
+
+        // Demo 3: Panel with content
+        var panel = new Panel(11, 2, 40, 8, "System Information")
+        {
+            BorderStyle = BorderStyle.Double
+        };
+        panel.AddLine("  OS: Linux");
+        panel.AddLine("  Platform: Blazor WebAssembly");
+        panel.AddLine("  Terminal: BlazorTerminal v1.0");
+        panel.AddLine("  Features: Advanced GUI Support");
+        terminal.DrawPanel(panel);
+
+        await Task.Delay(500);
+
+        // Demo 4: Progress bars
+        terminal.DrawAt(11, 44, "Progress Bars:");
+
+        var progressBar1 = new ProgressBar(30, 0.25) { Label = "Loading", FilledChar = '█', EmptyChar = '░' };
+        terminal.DrawProgressBar(13, 44, progressBar1);
+
+        await Task.Delay(300);
+
+        var progressBar2 = new ProgressBar(30, 0.65) { Label = "Install", FilledChar = '▓', EmptyChar = '░' };
+        terminal.DrawProgressBar(15, 44, progressBar2);
+
+        await Task.Delay(300);
+
+        var progressBar3 = new ProgressBar(30, 1.0) { Label = "Complete", FilledChar = '█', EmptyChar = '░' };
+        terminal.DrawProgressBar(17, 44, progressBar3);
+
+        await Task.Delay(500);
+
+        // Demo 5: Menu
+        var menu = new Menu("Start Application", "Configure Settings", "View Logs", "Exit")
+        {
+            SelectedIndex = 1,
+            BorderStyle = BorderStyle.Rounded,
+            Title = "Main Menu"
+        };
+        terminal.DrawMenu(20, 2, menu);
+
+        await Task.Delay(500);
+
+        // Demo 6: Nested boxes
+        terminal.DrawBox(20, 44, 45, 9, BorderStyle.Bold, "Dashboard");
+        terminal.DrawAt(21, 46, "CPU Usage:  [████████░░] 78%");
+        terminal.DrawAt(22, 46, "Memory:     [██████░░░░] 61%");
+        terminal.DrawAt(23, 46, "Disk Space: [███░░░░░░░] 34%");
+        terminal.DrawAt(24, 46, "Network:    [██████████] 100%");
+        terminal.DrawAt(26, 46, "Status: ✓ All systems operational");
+
+        await Task.Delay(500);
+
+        // Final message
+        terminal.SetCursorPosition(29, 0);
+        terminal.Write("Press any key to continue...");
     }
 }
